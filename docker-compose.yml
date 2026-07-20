@@ -1,0 +1,32 @@
+services:
+  feishu-assistant:
+    build:
+      context: .
+      network: host
+      args:
+        HTTP_PROXY: http://127.0.0.1:7890
+        HTTPS_PROXY: http://127.0.0.1:7890
+        ALL_PROXY: http://127.0.0.1:7890
+    container_name: feishu-assistant
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      TZ: Asia/Shanghai
+      HTTP_PROXY: http://host.docker.internal:7890
+      HTTPS_PROXY: http://host.docker.internal:7890
+      ALL_PROXY: http://host.docker.internal:7890
+      # Domestic service endpoints should not depend on an overseas proxy node.
+      NO_PROXY: localhost,127.0.0.1,::1,api.deepseek.com,open.feishu.cn
+      DAILY_REPORT_DIR: /reports
+      SKILLS_DIR: /app/skills
+      OAUTH_PUBLIC_URL: ${OAUTH_PUBLIC_URL:-}
+      CLAUDE_MEM_URL: http://host.docker.internal:37777
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    volumes:
+      - ./data:/app/data
+      - /srv/games/daily-intel/horizon/data/summaries:/reports:ro
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    command: tunnel --no-autoupdate --url http://feishu-assistant:8080
+    restart: unless-stopped

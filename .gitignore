@@ -1,0 +1,22 @@
+# Secrets and runtime state
+.env
+.env.*
+!.env.example
+data/
+knowledge_spaces.json
+oauth_tokens.json
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Optional third-party skill installed on the deployment host
+skills/markitdown/
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
